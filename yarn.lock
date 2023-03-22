@@ -8347,10 +8347,10 @@ react-dom@^18.2.0:
     loose-envify "^1.1.0"
     scheduler "^0.23.0"
 
-react-easy-router@^2.1.1:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/react-easy-router/-/react-easy-router-2.1.1.tgz#60cdf25a4c2ab7cfbf3127ecf81480d2a2f30e43"
-  integrity sha512-OMJkSXcVezG1Miq4TvIk+X3aCR4h/sb2TK11DMMopeUFT1sXwKULbSwvVeGGtb3SZlCVP+NmM0DbEjPydBgA2A==
+react-easy-router@^2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/react-easy-router/-/react-easy-router-2.1.2.tgz#3cebd6d700d520f10cd3d44766ed66166331b393"
+  integrity sha512-a0aNBdsngCIj7g4ThtTKQYpo+TaMrjLvRppes0PLq/salAMOXWNwqu0cdkX1ElZZu/JLcJOMqjlg2EW34l8T8g==
 
 react-error-overlay@^6.0.11:
   version "6.0.11"
