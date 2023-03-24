@@ -1,7 +1,7 @@
 import axios, { Method, AxiosResponse, AxiosError } from 'axios';
 import { baseUrl } from '../config';
 
-const request = async <T, R>(method: Method, url: string, body: T): Promise<R> => {
+const request = async <T>(method: Method, url: string, body?: T): Promise<T> => {
   const token = localStorage.getItem('token');
 
   // Axios initialization with default config
@@ -20,7 +20,7 @@ const request = async <T, R>(method: Method, url: string, body: T): Promise<R> =
         url,
         data: body,
       })
-      .then((response: AxiosResponse<R>) => {
+      .then((response: AxiosResponse<T>) => {
         resolve(response.data);
       })
       .catch((err: AxiosError<T>) => {

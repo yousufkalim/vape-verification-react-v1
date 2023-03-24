@@ -1,8 +1,8 @@
-import React, { FC, FormEvent, useState } from 'react';
+import React, { FC, FormEvent, useEffect, useState } from 'react';
 import api from '../../api/request';
 
 /*    Assets    */
-import HomeLogo from '../../assets/home/logo.svg';
+// import HomeLogo from '../../assets/home/logo.svg';
 import ValidBg from '../../assets/home/valid_bg.svg';
 import ValidImg from '../../assets/home/valid.svg';
 import InValidBg from '../../assets/home/invalid_bg.svg';
@@ -11,14 +11,32 @@ import UsedBg from '../../assets/home/used_bg.svg';
 import UsedImage from '../../assets/home/used.svg';
 import './Home.css';
 import { toast } from 'react-toastify';
+import { useParams } from 'react-router-dom';
+import { mediaUrl } from '../../config';
 
 interface IBody {
-  codeId: string;
+  codeId?: string;
+  message?: string;
+  status?: string;
+  success?: boolean;
 }
+// interface IResponse {
+//   message: string;
+//   status: string;
+//   success: boolean;
+// }
+
 interface IResponse {
-  message: string;
-  status: string;
-  success: boolean;
+  brand: IBrand;
+}
+
+interface IBrand {
+  name: string;
+  id: string;
+  preferences: {
+    color?: string;
+    logo?: string;
+  };
 }
 
 // const status = 'valid';
@@ -27,6 +45,11 @@ const Home: FC = () => {
   const [codeStatus, setCodeStatus] = useState<string>('');
   const [statusBg, setStatusBg] = useState<string>('');
   const [statusImage, setStatusImage] = useState<string>('');
+  const [brand, setBrand] = useState<IBrand>({
+    name: '',
+    id: '',
+    preferences: { color: '', logo: '' },
+  });
   const [loading, setLoading] = useState(false);
 
   // useEffect(() => {
@@ -44,6 +67,20 @@ const Home: FC = () => {
   //     setStatusImage(InValidImage);
   //   }
   // }, []);
+  const params = useParams();
+
+  useEffect(() => {
+    const { brandName } = params;
+    if (brandName) {
+      api<IResponse>('get', `/users/brand/${brandName}`)
+        .then((res) => {
+          setBrand(res.brand);
+        })
+        .catch(() => {
+          window.location.pathname = '/';
+        });
+    }
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setCode(e.target.value);
@@ -53,13 +90,16 @@ const Home: FC = () => {
     e.preventDefault();
     const body = {
       codeId: code,
+      brandId: brand.id,
     };
     if (code !== '') {
       setLoading(true);
-      api<IBody, IResponse>('post', '/codes/validate', body)
+      api<IBody>('post', '/codes/validate', body)
         .then((res) => {
           if (res.status === 'valid') {
-            setCodeStatus(res.message);
+            if (res?.message) {
+              setCodeStatus(res.message);
+            }
             setStatusBg(ValidBg);
             setStatusImage(ValidImg);
           }
@@ -85,12 +125,25 @@ const Home: FC = () => {
       toast.error('ERRO');
     }
   };
+
+  const logo = brand?.preferences?.logo ? `${mediaUrl}/${brand.preferences?.logo}` : '';
   return (
-    <div className="home">
+    <div
+      className="home"
+      style={{
+        // background: `url(${logo})`,
+        backgroundColor: brand?.preferences.color,
+      }}
+    >
+      <div className="bg_logo">
+        <img src={logo} />
+      </div>
+
       <div className="home_wrapper">
         <div className="home_logo">
-          <img src={HomeLogo} alt="logo" />
-          <div className="logo_title">rescurb</div>
+          {brand?.preferences?.logo && <img className="brand_logo" src={logo} />}
+          {/* <div className="logo_title">{brand?.name}</div> */}
+          {/* <img src={HomeLogo} alt="logo" /> */}
         </div>
         <div className="home_content">
           <div className="home_content_top">
@@ -152,7 +205,7 @@ const Home: FC = () => {
         </div>
       </div>
       <div className="home_footer">
-        © 2023 <span>@Brand_Name</span>, All Rights Reserved.
+        © 2023 <span>@Falcon Consulting</span>, All Rights Reserved.
       </div>
     </div>
   );
