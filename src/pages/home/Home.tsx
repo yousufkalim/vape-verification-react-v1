@@ -1,4 +1,4 @@
-import React, { FC, FormEvent, useEffect, useState } from 'react';
+import React, { FC, FormEvent, useLayoutEffect, useState } from 'react';
 import api from '../../api/request';
 
 /*    Assets    */
@@ -9,9 +9,10 @@ import InValidBg from '../../assets/home/invalid_bg.svg';
 import InValidImage from '../../assets/home/invalid.svg';
 import UsedBg from '../../assets/home/used_bg.svg';
 import UsedImage from '../../assets/home/used.svg';
+import Loading from '../../assets/loader.gif';
 import './Home.css';
 import { toast } from 'react-toastify';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { mediaUrl } from '../../config';
 
 interface IBody {
@@ -50,7 +51,9 @@ const Home: FC = () => {
     id: '',
     preferences: { color: '', logo: '' },
   });
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
 
   // useEffect(() => {
   //   if (status === 'valid') {
@@ -69,15 +72,18 @@ const Home: FC = () => {
   // }, []);
   const params = useParams();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const { brandName } = params;
     if (brandName) {
+      setLoading(true);
       api<IResponse>('get', `/users/brand/${brandName}`)
         .then((res) => {
           setBrand(res.brand);
+          setLoading(false);
         })
         .catch(() => {
-          window.location.pathname = '/';
+          navigate('/');
+          setLoading(false);
         });
     }
   }, []);
@@ -127,88 +133,97 @@ const Home: FC = () => {
   };
 
   const logo = brand?.preferences?.logo ? `${mediaUrl}/${brand.preferences?.logo}` : '';
-  return (
-    <div
-      className="home"
-      style={{
-        // background: `url(${logo})`,
-        backgroundColor: brand?.preferences.color,
-      }}
-    >
-      <div className="bg_logo">
-        <img src={logo} />
-      </div>
 
-      <div className="home_wrapper">
-        <div className="home_logo">
-          {brand?.preferences?.logo && <img className="brand_logo" src={logo} />}
-          {/* <div className="logo_title">{brand?.name}</div> */}
-          {/* <img src={HomeLogo} alt="logo" /> */}
+  if (loading) {
+    return (
+      <div className="home_loading">
+        <img src={Loading} alt="loading" />
+      </div>
+    );
+  } else {
+    return (
+      <div
+        className="home"
+        style={{
+          // background: `url(${logo})`,
+          backgroundColor: brand?.preferences.color,
+        }}
+      >
+        <div className="bg_logo">
+          <img src={logo} />
         </div>
-        <div className="home_content">
-          <div className="home_content_top">
-            <div className="home_left">
-              <div className="heading_main">Verify your product</div>
-              <form
-                onSubmit={(e) => {
-                  handleSubmit(e);
-                }}
-                className="code_field"
-              >
-                <div className="field_label">Enter Your Code</div>
-                <div>
-                  <input
-                    className="input_field"
-                    placeholder="12232 4533 6554"
-                    type="text"
-                    value={code}
-                    onChange={handleChange}
-                  />
-                </div>
-                <button disabled={!code || loading} className="verify_btn">
-                  {codeStatus ? 'Verify another code' : 'Verify'}
-                </button>
-              </form>
-            </div>
-            <div className="home_right">
-              <div className="heading_main">How to verify your product</div>
-              <div className="step_label">Step 1</div>
-              <div className="step_description">
-                Locate the authentication label on your product.
-              </div>
-              <div className="step_label">Step 2</div>
-              <div className="step_description">Scratch off the coating to reveal the code.</div>
-              <div className="step_label">Step 3</div>
-              <div className="step_description">
-                Enter the code in the input field on the left side of the page.
-              </div>
-              <div className="step_label">Step 4</div>
-              <div className="step_description">
-                Click the Verify button to get the authentication result.
-              </div>
-            </div>
+
+        <div className="home_wrapper">
+          <div className="home_logo">
+            {brand?.preferences?.logo && <img className="brand_logo" src={logo} />}
+            {/* <div className="logo_title">{brand?.name}</div> */}
+            {/* <img src={HomeLogo} alt="logo" /> */}
           </div>
-          {codeStatus && (
-            <div className="home_content_bottom" style={{ backgroundImage: `url(${statusBg})` }}>
-              <div className="home_status">
-                <div className="home_status_content">
-                  <div className="status">
-                    <span>
-                      <img src={statusImage} alt="status" />
-                    </span>{' '}
-                    {codeStatus}
+          <div className="home_content">
+            <div className="home_content_top">
+              <div className="home_left">
+                <div className="heading_main">Verify your product</div>
+                <form
+                  onSubmit={(e) => {
+                    handleSubmit(e);
+                  }}
+                  className="code_field"
+                >
+                  <div className="field_label">Enter Your Code</div>
+                  <div>
+                    <input
+                      className="input_field"
+                      placeholder="12232 4533 6554"
+                      type="text"
+                      value={code}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <button disabled={!code || loading} className="verify_btn">
+                    {codeStatus ? 'Verify another code' : 'Verify'}
+                  </button>
+                </form>
+              </div>
+              <div className="home_right">
+                <div className="heading_main">How to verify your product</div>
+                <div className="step_label">Step 1</div>
+                <div className="step_description">
+                  Locate the authentication label on your product.
+                </div>
+                <div className="step_label">Step 2</div>
+                <div className="step_description">Scratch off the coating to reveal the code.</div>
+                <div className="step_label">Step 3</div>
+                <div className="step_description">
+                  Enter the code in the input field on the left side of the page.
+                </div>
+                <div className="step_label">Step 4</div>
+                <div className="step_description">
+                  Click the Verify button to get the authentication result.
+                </div>
+              </div>
+            </div>
+            {codeStatus && (
+              <div className="home_content_bottom" style={{ backgroundImage: `url(${statusBg})` }}>
+                <div className="home_status">
+                  <div className="home_status_content">
+                    <div className="status">
+                      <span>
+                        <img src={statusImage} alt="status" />
+                      </span>{' '}
+                      {codeStatus}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
+        </div>
+        <div className="home_footer">
+          © 2023 <span>@Falcon Consulting</span>, All Rights Reserved.
         </div>
       </div>
-      <div className="home_footer">
-        © 2023 <span>@Falcon Consulting</span>, All Rights Reserved.
-      </div>
-    </div>
-  );
+    );
+  }
 };
 
 export default Home;

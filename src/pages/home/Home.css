@@ -26,8 +26,8 @@
   /* height: 20%; */
 }
 .bg_logo img {
-  width: 35rem;
-  max-height: 35rem;
+  width: 30rem;
+  max-height: 30rem;
   margin-left: auto;
   object-fit: fill;
   opacity: 0.3;
@@ -38,11 +38,11 @@
   align-items: center;
   justify-content: center;
   gap: 5px;
-  padding-bottom: 2%;
+  padding-bottom: 2.5%;
 }
 .brand_logo {
-  max-width: 10rem;
-  max-height: 10rem;
+  max-width: 8rem;
+  max-height: 8rem;
 }
 .logo_title {
   color: #1aabe9;
@@ -176,6 +176,19 @@
 .home_footer span {
   color: #1aabe9;
 }
+.home_loading {
+  background: #000;
+  height: 100vh;
+  width: 100%;
+}
+.home_loading img {
+  height: 30rem;
+  width: 30rem;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
 
 @media screen and (max-width: 700px) {
   .home {
@@ -188,6 +201,7 @@
   .home_content_top {
     flex-direction: column-reverse;
     margin-top: 3rem;
+    padding-block: 5rem 3rem;
   }
   .home_left {
     width: 100%;
@@ -210,12 +224,15 @@
     background-size: 30%;
   }
   .home_status_content {
-    padding-block: 5rem 10rem;
+    padding-block: 4rem 8rem;
   }
   .status span {
     margin-right: 5px;
   }
   .status {
-    font-size: 3.5rem;
+    font-size: 3rem;
+  }
+  .status img {
+    width: 4rem;
   }
 }
