@@ -51,7 +51,8 @@ const Home: FC = () => {
     id: '',
     preferences: { color: '', logo: '' },
   });
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [submitLoading, setSubmitLoading] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
@@ -99,7 +100,7 @@ const Home: FC = () => {
       brandId: brand.id,
     };
     if (code !== '') {
-      setLoading(true);
+      setSubmitLoading(true);
       api<IBody>('post', '/codes/validate', body)
         .then((res) => {
           if (res.status === 'valid') {
@@ -110,7 +111,7 @@ const Home: FC = () => {
             setStatusImage(ValidImg);
           }
           setCode('');
-          setLoading(false);
+          setSubmitLoading(false);
         })
         .catch((err) => {
           const { status, message } = err.response.data;
@@ -125,7 +126,7 @@ const Home: FC = () => {
             setStatusImage(InValidImage);
           }
           setCode('');
-          setLoading(false);
+          setSubmitLoading(false);
         });
     } else {
       toast.error('ERRO');
@@ -179,7 +180,7 @@ const Home: FC = () => {
                       onChange={handleChange}
                     />
                   </div>
-                  <button disabled={!code || loading} className="verify_btn">
+                  <button disabled={!code || submitLoading} className="verify_btn">
                     {codeStatus ? 'Verify another code' : 'Verify'}
                   </button>
                 </form>
